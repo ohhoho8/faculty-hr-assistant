@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { CitationLinks } from "@/components/citation-links";
+import { DueCell, URGENCY_ORDER, UrgencyTag, urgencyOf } from "@/components/deadline";
 import { ROSTER } from "@/lib/faculty/roster";
-import { formatDate, isDate } from "@/lib/rules/dates";
-import { buildSchedule, type EventCategory } from "@/lib/schedule/schedule";
+import { daysBetween } from "@/lib/rules/dates";
+import { buildBoard, type EventCategory } from "@/lib/schedule/schedule";
 
 const WINDOWS = [
   { days: 30, label: "30일" },
@@ -17,32 +18,19 @@ const WINDOWS = [
 const CATEGORIES: EventCategory[] = ["재임용", "승진", "정년보장", "연구년", "임용 제한", "정년퇴직", "학교 공통"];
 
 export function ScheduleView({ today }: { today: string }) {
-  const [asOf, setAsOf] = useState(today);
   const [windowDays, setWindowDays] = useState(180);
   const [category, setCategory] = useState<EventCategory | "전체">("전체");
 
-  const valid = isDate(asOf);
-  const events = useMemo(
-    () => (valid ? buildSchedule(ROSTER, asOf, windowDays).filter((event) => category === "전체" || event.category === category) : []),
-    [asOf, category, valid, windowDays],
-  );
-
-  const groups = useMemo(() => {
-    const map = new Map<string, typeof events>();
-    for (const event of events) {
-      const month = `${event.date.slice(0, 4)}년 ${Number(event.date.slice(5, 7))}월`;
-      map.set(month, [...(map.get(month) ?? []), event]);
-    }
-    return [...map.entries()];
-  }, [events]);
+  const events = buildBoard(ROSTER, today, windowDays).filter((event) => category === "전체" || event.category === category);
+  const daysOf = (date: string) => daysBetween(today, date);
+  const groups = URGENCY_ORDER.map((label) => ({
+    label,
+    items: events.filter((event) => urgencyOf(daysOf(event.date)).label === label),
+  })).filter((group) => group.items.length > 0);
 
   return (
     <>
-      <div className="panel mb-5 grid gap-3 p-4 sm:grid-cols-3">
-        <label className="text-sm font-medium">
-          기준일
-          <input type="date" className="field mt-1" value={asOf} onChange={(event) => setAsOf(event.target.value)} />
-        </label>
+      <div className="panel mb-6 grid gap-3 p-4 sm:grid-cols-2">
         <label className="text-sm font-medium">
           기간
           <select className="field mt-1" value={windowDays} onChange={(event) => setWindowDays(Number(event.target.value))}>
@@ -58,27 +46,29 @@ export function ScheduleView({ today }: { today: string }) {
         </label>
       </div>
 
-      {!valid && <p role="alert" className="text-sm text-unmet">기준일을 입력해 주세요.</p>}
-      {valid && events.length === 0 && <p className="panel p-6 text-sm text-muted">이 조건에 해당하는 일정이 없습니다.</p>}
+      {events.length === 0 && <p className="panel p-6 text-sm text-muted">이 조건에 해당하는 일정이 없습니다.</p>}
 
       <div className="space-y-6">
-        {groups.map(([month, items]) => (
-          <section key={month}>
-            <h2 className="mb-2 font-bold">{month} <span className="text-sm font-normal text-muted">{items.length}건</span></h2>
-            <ul className="panel divide-y divide-line">
+        {groups.map(({ label, items }) => (
+          <section key={label}>
+            <h2 className="mb-2 px-1 font-semibold">{label} <span className="text-sm font-normal text-muted">{items.length}건</span></h2>
+            <ul className="panel divide-y divide-line overflow-hidden">
               {items.map((event) => (
-                <li key={event.id} className="grid gap-1 px-4 py-3 text-sm sm:grid-cols-[6rem_1fr_auto] sm:items-center sm:gap-4">
-                  <span className="font-semibold tabular-nums">{formatDate(event.date)}</span>
+                <li key={event.id} className="grid gap-2 px-4 py-3 text-sm transition-colors hover:bg-tint sm:grid-cols-[5.5rem_1fr_auto_5rem] sm:items-center sm:gap-4">
+                  <span><UrgencyTag days={daysOf(event.date)} /></span>
                   <span>
-                    <span className="mr-1.5 text-xs text-accent">{event.category}</span>
-                    {event.title}
-                    {event.faculty && <span className="text-muted"> · {event.faculty.name} ({event.faculty.department})</span>}
+                    <span className="block font-medium">{event.title}</span>
+                    <span className="block text-xs text-muted">
+                      {event.category}
+                      {event.faculty && ` · ${event.faculty.name} · ${event.faculty.department}`}
+                    </span>
                   </span>
                   {event.basis === "가상" ? (
-                    <span className="w-fit rounded bg-canvas px-1.5 py-0.5 text-xs text-muted">가상 일정</span>
+                    <span className="w-fit rounded-full border border-line px-2.5 py-1 text-xs text-muted">가상 일정</span>
                   ) : (
                     <CitationLinks citations={event.citations} />
                   )}
+                  <DueCell days={daysOf(event.date)} />
                 </li>
               ))}
             </ul>

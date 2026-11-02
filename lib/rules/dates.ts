@@ -74,7 +74,3 @@ export function formatMonths(months: number): string {
   if (years === 0) return `${rest}개월`;
   return rest === 0 ? `${years}년` : `${years}년 ${rest}개월`;
 }
-
-export function todayInKorea(now: Date = new Date()): string {
-  return new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" }).format(now);
-}

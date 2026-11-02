@@ -65,6 +65,12 @@ describe("규정 질의응답", () => {
     expect(failed.notice).not.toContain("provider");
   });
 
+  it("모델이 제한시간 안에 답하지 않으면 조문을 먼저 보여준다", async () => {
+    const result = await askRegulation(QUESTION, () => new Promise(() => {}), 10);
+    expect(result.mode).toBe("search-only");
+    expect(result.sources.map((source) => source.id)).toContain(REAL_ID);
+  });
+
   it("2017년판 조문에는 현행과 다를 수 있다고 표시해 모델에 넘긴다", () => {
     const article = ARTICLES.find((item) => item.outdated)!;
     expect(formatSources([article])).toContain("2017년판");
@@ -90,5 +96,23 @@ describe("사용량 제한", () => {
     expect(checkRateLimit("a", 1, 1000)).toBe("ok");
     expect(checkRateLimit("b", 1, 1000)).toBe("daily");
     expect(checkRateLimit("b", 1, 1000 + 86_400_000)).toBe("ok");
+  });
+});
+
+describe("근거 범위", () => {
+  it("다른 직종을 묻지 않으면 전임교원 규정만 넘긴다", async () => {
+    const result = await askRegulation("육아휴직은 몇 년까지 가능한가요?", null);
+    expect(result.sources.map((source) => source.docId)).not.toContain("lecturer");
+    expect(result.sources.map((source) => source.id)).toContain("charter-leave:제45조");
+  });
+
+  it("조교수를 조교로 오인하지 않는다", async () => {
+    const result = await askRegulation("조교수 임용기간은 몇 년인가요?", null);
+    expect(result.sources.map((source) => source.docId)).not.toContain("teaching-assistant");
+  });
+
+  it("다른 직종을 물으면 해당 규정을 포함한다", async () => {
+    const result = await askRegulation("강사 재임용 통지는 언제 하나요?", null);
+    expect(result.sources.map((source) => source.docId)).toContain("lecturer");
   });
 });

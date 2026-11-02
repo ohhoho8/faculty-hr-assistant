@@ -48,7 +48,7 @@ export function FacultyForm({ value, onChange }: Props) {
   return (
     <div className="space-y-5">
       <fieldset className="grid gap-3 sm:grid-cols-2">
-        <legend className="mb-2 text-sm font-bold">기본 정보</legend>
+        <legend className="mb-2 text-sm font-semibold">기본 정보</legend>
         <label className="text-sm font-medium">
           구분
           <select className="field mt-1" value={value.track} onChange={(event) => set("track", event.target.value as Track)}>
@@ -81,7 +81,7 @@ export function FacultyForm({ value, onChange }: Props) {
       </fieldset>
 
       <fieldset className="grid gap-3 sm:grid-cols-2">
-        <legend className="mb-2 text-sm font-bold">임용 제한</legend>
+        <legend className="mb-2 text-sm font-semibold">임용 제한</legend>
         <label className="text-sm font-medium">
           징계처분
           <select className="field mt-1" value={value.discipline} onChange={(event) => set("discipline", event.target.value as DisciplineType)}>
@@ -99,13 +99,13 @@ export function FacultyForm({ value, onChange }: Props) {
       </fieldset>
 
       <fieldset className="grid gap-3 sm:grid-cols-2">
-        <legend className="mb-2 text-sm font-bold">연구년 이력</legend>
+        <legend className="mb-2 text-sm font-semibold">연구년 이력</legend>
         <DateField label="직전 연구년 복귀일" value={value.lastSabbaticalReturn} onChange={(next) => set("lastSabbaticalReturn", next)} />
         <NumberField label="연구결과물 지체 기간(개월)" value={value.reportDelayMonths} onChange={(next) => set("reportDelayMonths", next ?? 0)} />
       </fieldset>
 
       <fieldset>
-        <legend className="mb-2 text-sm font-bold">휴직·파견·연수 이력</legend>
+        <legend className="mb-2 text-sm font-semibold">휴직·파견·연수 이력</legend>
         <ul className="space-y-2">
           {value.leaves.map((leave, index) => (
             <li key={index} className="grid grid-cols-[1fr_1fr] gap-2 sm:grid-cols-[6rem_1fr_1fr_auto]">

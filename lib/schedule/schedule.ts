@@ -1,5 +1,5 @@
 import { disciplineRestrictionEnd, promotionEligibleDate } from "@/lib/rules/common";
-import { addMonths, daysBetween, nextAppointmentDate, semesterEnd } from "@/lib/rules/dates";
+import { addDays, addMonths, daysBetween, nextAppointmentDate, semesterEnd } from "@/lib/rules/dates";
 import { reappointmentDates } from "@/lib/rules/reappointment";
 import { sabbaticalEligibleDate } from "@/lib/rules/sabbatical";
 import { tenureEligibility } from "@/lib/rules/tenure";
@@ -91,6 +91,15 @@ function commonEvents(year: number): ScheduleEvent[] {
     virtual("fall-apply", `${year}-09-15`, "3월 임용 승진·정년보장 신청 접수 시작", "승진"),
     virtual("fall-committee", `${year}-12-20`, "3월 임용 교원인사위원회 심의", "승진"),
   ];
+}
+
+const LOOK_BACK_DAYS = 30;
+
+/** 앞으로의 일정에 처리 여부를 확인해야 하는 지난 절차 기한을 더한다. */
+export function buildBoard(roster: FacultyRecord[], asOf: string, windowDays: number): ScheduleEvent[] {
+  return buildSchedule(roster, addDays(asOf, -LOOK_BACK_DAYS), LOOK_BACK_DAYS + windowDays).filter(
+    (event) => event.date >= asOf || (event.faculty !== null && event.title.includes("기한")),
+  );
 }
 
 export function buildSchedule(roster: FacultyRecord[], asOf: string, windowDays: number): ScheduleEvent[] {

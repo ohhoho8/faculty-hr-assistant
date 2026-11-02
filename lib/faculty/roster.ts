@@ -1,5 +1,11 @@
 import type { FacultyRecord } from "@/lib/rules/types";
 
+/**
+ * 시연 기준일. 가상 교원의 임용일과 만료일은 실제 학사 일정에 맞춘 고정값이라,
+ * 언제 열어도 같은 긴급도 분포가 보이도록 화면의 기본 기준일을 여기에 고정한다.
+ */
+export const DEMO_DATE = "2026-11-02";
+
 const blank = {
   college: "데모공과대학",
   track: "tenure",
@@ -126,7 +132,7 @@ export const ROSTER: FacultyRecord[] = [
     contractEndDate: "2027-02-28",
     birthDate: "1977-08-18",
     discipline: "감봉",
-    disciplineEndDate: "2026-06-30",
+    disciplineEndDate: "2025-11-25",
   },
   {
     ...blank,

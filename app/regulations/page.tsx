@@ -15,14 +15,14 @@ export default function RegulationsPage() {
       </PageHeader>
       {groups.map((group) => (
         <section key={group.title} className="mb-6">
-          <h2 className="mb-2 font-bold">{group.title}</h2>
-          <ul className="panel divide-y divide-line">
+          <h2 className="eyebrow mb-2 px-1">{group.title}</h2>
+          <ul className="panel divide-y divide-line overflow-hidden">
             {group.documents.map((document) => (
               <li key={document.id}>
-                <Link href={`/regulations/${document.id}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm hover:bg-canvas">
+                <Link href={`/regulations/${document.id}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm hover:bg-tint">
                   <span className="font-medium">
                     {document.title}
-                    {document.outdated && <span className="ml-2 rounded bg-review-soft px-1.5 py-0.5 text-xs text-review">구버전</span>}
+                    {document.outdated && <span className="ml-2 rounded-md bg-review-soft px-1.5 py-0.5 text-xs text-review">구버전</span>}
                   </span>
                   <span className="text-xs text-muted">
                     {document.amended ? `${formatDate(document.amended)} 개정 · ` : ""}{document.count}개 항목

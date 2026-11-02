@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { findArticle } from "@/lib/corpus";
-import { NEW_FACULTY, ROSTER } from "@/lib/faculty/roster";
-import { buildSchedule, retirementDate } from "./schedule";
+import { urgencyOf } from "@/components/deadline";
+import { DEMO_DATE, NEW_FACULTY, ROSTER } from "@/lib/faculty/roster";
+import { daysBetween } from "@/lib/rules/dates";
+import { buildBoard, buildSchedule, retirementDate } from "./schedule";
 
 describe("업무 일정", () => {
   const asOf = "2026-11-02";
@@ -38,6 +40,12 @@ describe("업무 일정", () => {
   it("정년은 만 65세가 되는 학기 말일이다", () => {
     expect(retirementDate("1961-12-30")).toBe("2027-02-28");
     expect(retirementDate("1962-04-01")).toBe("2027-08-31");
+  });
+
+  it("시연 기준일에 긴급도 5단계가 모두 나온다", () => {
+    const list = buildBoard(ROSTER, DEMO_DATE, 180).filter((item) => item.faculty);
+    const labels = new Set(list.map((item) => urgencyOf(daysBetween(DEMO_DATE, item.date)).label));
+    expect([...labels].sort()).toEqual(["기한 지남", "여유", "예정", "임박", "주의"].sort());
   });
 
   it("범위를 벗어난 일정은 제외한다", () => {

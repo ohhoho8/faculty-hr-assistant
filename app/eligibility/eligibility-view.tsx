@@ -19,8 +19,7 @@ function pick(id: string): FacultyRecord {
   return clone(ROSTER.find((faculty) => faculty.id === id) ?? (id === "custom" ? NEW_FACULTY : ROSTER[0]));
 }
 
-function dateProblem(faculty: FacultyRecord, asOf: string, task: Task, sabbaticalStart: string, leaveStart: string): string | null {
-  if (!isDate(asOf)) return "판정 기준일을 입력해 주세요.";
+function dateProblem(faculty: FacultyRecord, task: Task, sabbaticalStart: string, leaveStart: string): string | null {
   if (!isDate(faculty.hireDate) || !isDate(faculty.rankStartDate)) return "신규임용일과 현 직급 임용일을 입력해 주세요.";
   if (faculty.rankStartDate < faculty.hireDate) return "현 직급 임용일은 신규임용일보다 앞설 수 없습니다.";
   if (faculty.leaves.some((leave) => !isDate(leave.start) || !isDate(leave.end) || leave.end < leave.start)) return "휴직·파견·연수 이력의 기간을 확인해 주세요.";
@@ -33,7 +32,7 @@ export function EligibilityView({ today, initialFacultyId, initialTask }: { toda
   const [facultyId, setFacultyId] = useState(initialFacultyId);
   const [faculty, setFaculty] = useState(() => pick(initialFacultyId));
   const [task, setTask] = useState<Task>(initialTask);
-  const [asOf, setAsOf] = useState(today);
+  const asOf = today;
 
   const [sabbaticalStart, setSabbaticalStart] = useState(`${Number(today.slice(0, 4)) + 2}-03-01`);
   const [sabbaticalMonths, setSabbaticalMonths] = useState<SabbaticalMonths>(12);
@@ -49,7 +48,7 @@ export function EligibilityView({ today, initialFacultyId, initialTask }: { toda
   const reason = LEAVE_REASONS.find((item) => item.no === reasonNo)!;
   const activeVariant = reason.variants?.some((item) => item.value === variant) ? (variant as LeaveVariant) : reason.variants?.[0].value;
 
-  const problem = dateProblem(faculty, asOf, task, sabbaticalStart, leaveStart);
+  const problem = dateProblem(faculty, task, sabbaticalStart, leaveStart);
   const evaluate = (): RuleResult | null => {
     if (problem) return null;
     if (task === "promotion") return evaluatePromotion(faculty, asOf);
@@ -82,8 +81,8 @@ export function EligibilityView({ today, initialFacultyId, initialTask }: { toda
   return (
     <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
       <div className="space-y-4">
-        <div className="panel grid gap-3 p-4 sm:grid-cols-2">
-          <label className="text-sm font-medium">
+        <div className="panel p-4">
+          <label className="block text-sm font-medium">
             교원
             <select
               className="field mt-1"
@@ -97,20 +96,16 @@ export function EligibilityView({ today, initialFacultyId, initialTask }: { toda
               <option value="custom">직접 입력</option>
             </select>
           </label>
-          <label className="text-sm font-medium">
-            판정 기준일
-            <input type="date" className="field mt-1" value={asOf} onChange={(event) => setAsOf(event.target.value)} />
-          </label>
         </div>
 
-        <div role="tablist" aria-label="업무" className="panel flex gap-1 overflow-x-auto p-1">
+        <div role="tablist" aria-label="업무" className="flex gap-5 overflow-x-auto border-b border-line/80 px-1">
           {TASKS.map((item) => (
             <button
               key={item.id}
               role="tab"
               aria-selected={task === item.id}
               onClick={() => setTask(item.id)}
-              className={`flex-1 shrink-0 whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium ${task === item.id ? "bg-accent text-white" : "text-muted hover:bg-canvas"}`}
+              className={`-mb-px shrink-0 border-b-2 pb-2.5 text-sm font-semibold whitespace-nowrap ${task === item.id ? "border-ink text-ink" : "border-transparent text-muted hover:text-ink"}`}
             >
               {item.label}
             </button>
@@ -181,7 +176,7 @@ export function EligibilityView({ today, initialFacultyId, initialTask }: { toda
         )}
 
         <details className="panel p-4" open={facultyId === "custom"}>
-          <summary className="cursor-pointer text-sm font-bold">교원 정보 {facultyId === "custom" ? "입력" : "확인·수정"}</summary>
+          <summary className="cursor-pointer text-sm font-semibold">교원 정보 {facultyId === "custom" ? "입력" : "확인·수정"}</summary>
           <div className="mt-4">
             <FacultyForm value={faculty} onChange={setFaculty} />
           </div>

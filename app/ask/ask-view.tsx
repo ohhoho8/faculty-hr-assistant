@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import type { AskResult, AskSource } from "@/lib/ai/ask";
 
 const EXAMPLES = ["육아휴직은 몇 년까지 가능한가요?", "재임용 통지는 만료 몇 개월 전까지 해야 하나요?", "연구년 후 의무 복무 기간은 얼마인가요?"];
@@ -13,7 +13,7 @@ function SourceCard({ source }: { source: AskSource }) {
       <summary className="cursor-pointer font-medium">
         {source.docTitle} {source.article}
         {source.heading && !source.article.startsWith("별표") && !source.article.startsWith("부칙") ? ` (${source.heading})` : ""}
-        {source.outdated && <span className="ml-2 rounded bg-review-soft px-1.5 py-0.5 text-xs text-review">2017년판</span>}
+        {source.outdated && <span className="ml-2 rounded-md bg-review-soft px-1.5 py-0.5 text-xs text-review">2017년판</span>}
       </summary>
       <p className="mt-2 leading-relaxed whitespace-pre-line text-muted">{source.text}</p>
       <Link href={`/regulations/${source.docId}#${anchor}`} className="mt-2 inline-block text-xs text-accent underline underline-offset-2">규정 전문에서 보기</Link>
@@ -21,8 +21,8 @@ function SourceCard({ source }: { source: AskSource }) {
   );
 }
 
-export function AskView() {
-  const [question, setQuestion] = useState("");
+export function AskView({ initialQuestion }: { initialQuestion: string }) {
+  const [question, setQuestion] = useState(initialQuestion);
   const [result, setResult] = useState<AskResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -47,6 +47,12 @@ export function AskView() {
     }
   }
 
+  useEffect(() => {
+    if (initialQuestion.length < 2) return;
+    const timer = setTimeout(() => ask(initialQuestion), 0);
+    return () => clearTimeout(timer);
+  }, [initialQuestion]);
+
   function submit(event: FormEvent) {
     event.preventDefault();
     if (question.trim().length >= 2) ask(question.trim());
@@ -66,8 +72,8 @@ export function AskView() {
         />
         <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
           <p className="text-xs text-muted">실제 교원의 이름이나 개인정보는 입력하지 마세요.</p>
-          <button type="submit" disabled={loading || question.trim().length < 2} className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
-            {loading ? "찾는 중" : "질문하기"}
+          <button type="submit" disabled={loading || question.trim().length < 2} className="rounded-full bg-ink px-5 py-2 text-sm font-semibold text-white disabled:opacity-40">
+            {loading ? "답변 작성 중" : "질문하기"}
           </button>
         </div>
       </form>
@@ -82,7 +88,7 @@ export function AskView() {
                 setQuestion(example);
                 ask(example);
               }}
-              className="rounded-full border border-line bg-surface px-3 py-1.5 text-sm text-muted hover:border-accent hover:text-ink"
+              className="rounded-full border border-dashed border-faint/60 bg-surface/60 px-3 py-1.5 text-sm text-muted hover:border-ink hover:text-ink"
             >
               {example}
             </button>
@@ -90,6 +96,7 @@ export function AskView() {
         </div>
       )}
 
+      {loading && <p role="status" className="mt-4 px-1 text-sm text-muted">조문을 찾아 읽고 있습니다. 최대 30초 걸릴 수 있습니다.</p>}
       {error && <p role="alert" className="mt-4 text-sm text-unmet">{error}</p>}
 
       <div aria-live="polite">
@@ -98,7 +105,7 @@ export function AskView() {
         )}
         {result?.answer && (
           <section className="panel mt-4 p-4">
-            <h2 className="mb-2 flex items-center gap-2 font-bold">
+            <h2 className="mb-2 flex items-center gap-2 font-semibold">
               답변
               {result.mode === "insufficient" && <span className="rounded bg-review-soft px-1.5 py-0.5 text-xs font-semibold text-review">근거 부족</span>}
             </h2>
@@ -106,10 +113,10 @@ export function AskView() {
             <p className="mt-3 text-xs text-muted">AI가 조문을 요약한 참고 정보입니다. 업무 처리 전 아래 원문을 확인하세요.</p>
           </section>
         )}
-        {result?.notice && <p className="mt-4 rounded-md bg-review-soft px-3 py-2 text-sm text-review">{result.notice}</p>}
+        {result?.notice && <p className="mt-4 rounded-xl bg-review-soft px-3.5 py-2.5 text-sm text-review">{result.notice}</p>}
         {result && result.sources.length > 0 && (
           <section className="mt-5">
-            <h2 className="mb-2 font-bold">{result.answer ? "근거 조문" : "관련 조문"}</h2>
+            <h2 className="mb-2 px-1 font-semibold">{result.answer ? "근거 조문" : "관련 조문"}</h2>
             <div className="space-y-2">
               {result.sources.map((source) => <SourceCard key={source.id} source={source} />)}
             </div>

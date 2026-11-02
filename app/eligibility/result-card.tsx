@@ -8,7 +8,7 @@ export function ResultCard({ result }: { result: RuleResult }) {
     <section aria-live="polite" className="panel overflow-hidden">
       <div className="flex items-start justify-between gap-3 border-b border-line p-4">
         <div>
-          <h2 className="font-bold">{result.task}</h2>
+          <h2 className="text-lg font-semibold tracking-tight">{result.task}</h2>
           <p className="mt-1 text-sm text-muted">{result.summary}</p>
         </div>
         <VerdictBadge verdict={result.verdict} />
@@ -29,10 +29,10 @@ export function ResultCard({ result }: { result: RuleResult }) {
 
       {result.facts.length > 0 && (
         <div className="border-t border-line p-4">
-          <h3 className="mb-2 text-sm font-semibold">적용 내용</h3>
+          <h3 className="eyebrow mb-2.5">적용 내용</h3>
           <dl className="space-y-2 text-sm">
             {result.facts.map((fact) => (
-              <div key={fact.label} className="grid gap-x-3 sm:grid-cols-[8rem_1fr]">
+              <div key={fact.label} className="grid gap-x-3 sm:grid-cols-[7rem_minmax(0,1fr)]">
                 <dt className="text-muted">{fact.label}</dt>
                 <dd>
                   {fact.value}
@@ -46,13 +46,13 @@ export function ResultCard({ result }: { result: RuleResult }) {
 
       {result.dates.length > 0 && (
         <div className="border-t border-line p-4">
-          <h3 className="mb-2 text-sm font-semibold">주요 날짜</h3>
+          <h3 className="eyebrow mb-2.5">주요 날짜</h3>
           <dl className="space-y-2 text-sm">
             {result.dates.map((item) => (
-              <div key={item.label} className="grid gap-x-3 sm:grid-cols-[11rem_6rem_1fr]">
+              <div key={item.label} className="grid grid-cols-[1fr_auto] gap-x-3">
                 <dt className="text-muted">{item.label}</dt>
                 <dd className="font-semibold tabular-nums">{formatDate(item.date)}</dd>
-                <dd><CitationLinks citations={item.citations} /></dd>
+                <dd className="col-span-2"><CitationLinks citations={item.citations} /></dd>
               </div>
             ))}
           </dl>
@@ -60,7 +60,7 @@ export function ResultCard({ result }: { result: RuleResult }) {
       )}
 
       {result.notes.length > 0 && (
-        <ul className="list-disc space-y-1 border-t border-line bg-canvas p-4 pl-8 text-xs leading-relaxed text-muted">
+        <ul className="list-disc space-y-1 border-t border-line bg-tint p-4 pl-8 text-xs leading-relaxed text-muted">
           {result.notes.map((note) => <li key={note}>{note}</li>)}
         </ul>
       )}

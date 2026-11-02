@@ -133,6 +133,22 @@ export function search(query: string, limit = 6): SearchHit[] {
     .slice(0, limit);
 }
 
+const CONTEXT_LIMIT = 6;
+/** 전임교원이 아닌 직종이나 별도 규정을 묻는 표현. 조교수는 조교가 아니다. */
+const OTHER_SCOPE = /강사|겸임|조교(?!수)|특임|연구원|hk|국제교육원|임상|명예|노사|해외여행|석좌|초빙/i;
+
+/**
+ * 답변 근거로 쓸 조문을 고른다. 다른 직종을 묻지 않으면 전임교원 규정으로 좁힌다.
+ * 근거가 없으면 빈 배열이다.
+ */
+export function retrieve(query: string): SearchHit[] {
+  const hits = search(query, CONTEXT_LIMIT * 2);
+  if (!hasEvidence(hits)) return [];
+  const core = hits.filter((hit) => hit.article.core);
+  const scoped = OTHER_SCOPE.test(query) || core.length === 0 ? hits : core;
+  return scoped.slice(0, CONTEXT_LIMIT);
+}
+
 /** 근거로 삼을 만큼 질문과 맞닿은 조문이 있는지 판단한다. eval의 규정 밖 질문으로 정한 값이다. */
 export function hasEvidence(hits: SearchHit[]): boolean {
   return (hits[0]?.score ?? 0) >= MIN_SCORE;

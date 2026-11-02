@@ -20,7 +20,7 @@ export default async function RegulationPage({ params }: { params: Promise<{ doc
         <Link href="/regulations" className="text-sm text-accent underline underline-offset-2">규정 목록</Link>
       </PageHeader>
       {document.outdated && (
-        <p className="mb-4 rounded-md bg-review-soft px-3 py-2 text-sm text-review">2017년판입니다. 휴직 조문(제44~47조)을 제외한 내용은 현행과 다를 수 있습니다.</p>
+        <p className="mb-4 rounded-xl bg-review-soft px-3 py-2 text-sm text-review">2017년판입니다. 휴직 조문(제44~47조)을 제외한 내용은 현행과 다를 수 있습니다.</p>
       )}
       <div className="space-y-2">
         {articles.map((article) => (
