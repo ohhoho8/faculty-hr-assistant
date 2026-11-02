@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #1c2530;
+  --color-muted: #5b6876;
+  --color-line: #dde3e9;
+  --color-surface: #ffffff;
+  --color-canvas: #f4f6f8;
+  --color-accent: #0f5f5a;
+  --color-accent-soft: #e3f0ee;
+  --color-met: #1b7a45;
+  --color-met-soft: #e4f3ea;
+  --color-unmet: #b3322b;
+  --color-unmet-soft: #fbe9e7;
+  --color-review: #8f5b00;
+  --color-review-soft: #fdf1d8;
+  --font-sans: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+}
+
+html {
+  scroll-padding-top: 1.5rem;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+:target {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.field {
+  width: 100%;
+  border: 1px solid var(--color-line);
+  border-radius: 0.375rem;
+  background: var(--color-surface);
+  padding: 0.5rem 0.625rem;
+  font-size: 0.875rem;
+}
+
+.field:focus-visible,
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.panel {
+  border: 1px solid var(--color-line);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+}
