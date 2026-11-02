@@ -1,0 +1,30 @@
+{
+  "answerable": [
+    { "q": "감봉 처분을 받은 교원은 몇 개월 동안 승진이 안 되나요?", "expect": ["faculty-personnel:제12조"] },
+    { "q": "부교수에서 교수로 승진할 때 필요한 기간은?", "expect": ["faculty-personnel:제19조"] },
+    { "q": "재임용 심사에서 의견 진술 기회는 어떻게 주나요?", "expect": ["faculty-personnel:제33조"] },
+    { "q": "교수로 처음 임용되면 임기가 몇 년인가요?", "expect": ["faculty-personnel:제16조"] },
+    { "q": "다른 학교에서 정년보장 받은 교수도 심사를 받아야 하나요?", "expect": ["faculty-personnel:제34조"] },
+    { "q": "연구년 중에 보직을 맡을 수 있나요?", "expect": ["sabbatical:제9조"] },
+    { "q": "연구년 중 조기 복귀하면 어떻게 처리되나요?", "expect": ["sabbatical:제6조"] },
+    { "q": "연구결과물을 늦게 내면 다음 연구년에 불이익이 있나요?", "expect": ["sabbatical:제4조"] },
+    { "q": "연구년에 산업체 활동을 해도 되나요?", "expect": ["sabbatical:제12조"] },
+    { "q": "입양 휴직 기간은 얼마나 되나요?", "expect": ["charter-leave:제45조"] },
+    { "q": "노조 전임자도 휴직 대상인가요?", "expect": ["charter-leave:제44조"] },
+    { "q": "자기개발 휴직은 재직 몇 년 이상이어야 하나요?", "expect": ["charter-leave:제44조", "charter-leave:제45조"] },
+    { "q": "공무상 질병 휴직 중 급여는 어떻게 되나요?", "expect": ["charter-leave:제47조"] },
+    { "q": "신규 임용 공고 후 심사 단계는 어떻게 되나요?", "expect": ["faculty-personnel:제24조"] },
+    { "q": "정직 기간과 보수는 어떻게 되나요?", "expect": ["faculty-personnel:제53조"] },
+    { "q": "교수 호봉 12호봉의 경력 기준은?", "expect": ["appendix-1:별표1"] },
+    { "q": "파견을 신청하려면 어떤 절차가 필요한가요?", "expect": ["faculty-personnel:제60조"] },
+    { "q": "겸직 교원의 금전 지원 내역 보고 기한은?", "expect": ["faculty-personnel:제7조"] }
+  ],
+  "unanswerable": [
+    "도서관 열람실 예약 방법 알려줘",
+    "셔틀버스 시간표가 궁금해요",
+    "내일 날씨 어때?",
+    "등록금 납부 기한은 언제인가요?",
+    "학생 수강신청 정정 기간은?",
+    "교내 카페 영업시간 알려줘"
+  ]
+}

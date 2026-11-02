@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #17191f;
+  --color-muted: #6c7280;
+  --color-faint: #9aa0ac;
+  --color-line: #e8e9ee;
+  --color-surface: #ffffff;
+  --color-canvas: #eceef3;
+  --color-tint: #f5f6f9;
+  --color-accent: #5655d7;
+  --color-accent-soft: #ecebfc;
+  --color-met: #178a55;
+  --color-met-soft: #e4f6ec;
+  --color-unmet: #d6372c;
+  --color-unmet-soft: #fdeaea;
+  --color-high: #d9730d;
+  --color-high-soft: #fdf0e1;
+  --color-review: #a87a00;
+  --color-review-soft: #fdf5d8;
+  --font-sans: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+}
+
+html {
+  scroll-padding-top: 1.5rem;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum";
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
+}
+
+:target {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .field {
+    width: 100%;
+    border: 1px solid var(--color-line);
+    border-radius: 0.75rem;
+    background: var(--color-surface);
+    padding: 0.55rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+.field:focus-visible,
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+@utility panel {
+  border-radius: 1.25rem;
+  background: var(--color-surface);
+  box-shadow: 0 1px 2px rgb(23 25 31 / 0.04);
+}
+
+@layer components {
+  .eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-muted);
+  }
+}
