@@ -4,6 +4,9 @@ import { askRegulation } from "@/lib/ai/ask";
 import { generateWithGemini } from "@/lib/ai/gemini";
 import { checkRateLimit } from "@/lib/rate-limit";
 
+// Gemini 응답이 20초 넘게 걸릴 수 있어 서버 함수 실행 시간을 넉넉히 둔다.
+export const maxDuration = 60;
+
 const requestSchema = z.object({ question: z.string().trim().min(2).max(500) });
 
 export async function POST(request: Request) {
