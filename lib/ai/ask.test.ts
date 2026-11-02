@@ -3,7 +3,7 @@ import { ARTICLES } from "@/lib/corpus";
 import { checkRateLimit, resetRateLimit } from "@/lib/rate-limit";
 import { search } from "@/lib/search/search";
 import { formatSources } from "./gemini";
-import { askRegulation } from "./ask";
+import { askRegulation, stripInternalIds } from "./ask";
 
 const QUESTION = "연구년 신청서는 언제까지 내야 하나요?";
 const REAL_ID = "sabbatical:제7조";
@@ -96,6 +96,15 @@ describe("사용량 제한", () => {
     expect(checkRateLimit("a", 1, 1000)).toBe("ok");
     expect(checkRateLimit("b", 1, 1000)).toBe("daily");
     expect(checkRateLimit("b", 1, 1000 + 86_400_000)).toBe("ok");
+  });
+});
+
+describe("내부 id 제거", () => {
+  it("답변 본문에 섞인 조문 id를 지운다", () => {
+    expect(stripInternalIds("자녀 1명당 3년 이내입니다(charter-leave:제45조).")).toBe("자녀 1명당 3년 이내입니다.");
+    expect(stripInternalIds("근거는 faculty-personnel:제33조, sabbatical:제4조입니다.")).toBe("근거는입니다.");
+    expect(stripInternalIds("정관 제45조에 따라 3년입니다.")).toBe("정관 제45조에 따라 3년입니다.");
+    expect(stripInternalIds("(charter-leave:제44조, charter-leave:제45조) 기준입니다.")).toBe("기준입니다.");
   });
 });
 

@@ -35,6 +35,14 @@ function withTimeout<T>(work: Promise<T>, ms: number): Promise<T> {
   return Promise.race([work, timeout]).finally(() => clearTimeout(timer));
 }
 
+// 모델이 지시와 달리 내부 조문 id를 본문에 쓰는 경우가 있어 지운다.
+const ID = String.raw`[a-z][a-z0-9-]*:(?:제\s*\d+조(?:의\d+)?|부칙\s*\d+|별표\s*\d)`;
+const INTERNAL_ID = new RegExp(String.raw`\s*\(?\b${ID}(?:\s*,\s*${ID})*\)?`, "g");
+
+export function stripInternalIds(answer: string): string {
+  return answer.replace(INTERNAL_ID, "").replace(/\(\s*\)/g, "").replace(/\s+([.,])/g, "$1").trim();
+}
+
 const NO_KEY = "AI 답변이 꺼져 있어 관련 조문만 표시합니다.";
 const FAILED = "AI 답변을 만들지 못해 관련 조문만 표시합니다.";
 
@@ -69,7 +77,7 @@ export async function askRegulation(question: string, generator: AnswerGenerator
   }
   return {
     mode: parsed.insufficient ? "insufficient" : "answer",
-    answer: parsed.answer,
+    answer: stripInternalIds(parsed.answer),
     sources: (cited.length > 0 ? cited : sources).map(toSource),
     notice: null,
   };
